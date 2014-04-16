@@ -1,0 +1,19 @@
+{
+    "name": "beerguide/brewerydb",
+    "type": "library",
+    "description": "Composer implementation of Brewerydb.com API.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nathan Bird",
+            "email": "nathan@beerguide.com.au"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+		"guzzle/guzzle": "3.8.*@dev",
+    },
+    "autoload": {
+        "psr-0": {"Beerguide\\Brewerydb\\": "src"}
+    },
+}
