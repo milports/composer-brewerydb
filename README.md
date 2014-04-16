@@ -1,7 +1,7 @@
 composer-brewerydb
 ==================
 
-Composer package for implementing the BreweryDB API in Laravel, using Guzzle for retrieval and caching.
+Composer package for implementing the BreweryDB API in Laravel, using Guzzle (version 4) for retrieval and caching.
 
 # Installation
 

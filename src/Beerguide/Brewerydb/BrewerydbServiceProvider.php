@@ -43,7 +43,7 @@ class BrewerydbServiceProvider extends ServiceProvider {
 	{
 		$this->app['brewerydb'] = $this->app->share(function($app)
 		{
-				return new Brewerydb;
+			return new Brewerydb;
 		});
 	}
 

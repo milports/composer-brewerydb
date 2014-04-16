@@ -1,10 +1,7 @@
 <?php namespace Beerguide\Brewerydb;
 
-use Guzzle;
-use Doctrine\Common\Cache\FilesystemCache;
-use Guzzle\Cache\DoctrineCacheAdapter;
-use Guzzle\Plugin\Cache\CachePlugin;
-use Guzzle\Plugin\Cache\DefaultCacheStorage;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 class Client {
 
@@ -62,7 +59,11 @@ class Client {
 		$this->_url = (string) $url;
 
 		// Check availability of API
-		$this->heartbeat();
+		if ($this->heartbeat() == 200) {
+            // API online
+		} else {
+		    // API offline
+		}
 	}
 
 	/**
@@ -72,11 +73,11 @@ class Client {
 	 */
 	public function heartbeat()
 	{
-		$available = $this->request('heartbeat', null, 'GET', true);
+        $client = new Client(['base_url'] => $this->_url]);
+        $available = $client->get('/heartbeat');
 
-		return $available;
+		return $available->getStatusCode();
 	}
-
 
 	/**
 	 * Sends a request using curl to the required endpoint
@@ -96,18 +97,20 @@ class Client {
 		$this->_lastParsedResponse = null;
 
 		if ($transferType == self::GET) {
-			$client = new Guzzle($this->_url);
+			$client = new Client(['base_url'] => $this->_url]);
 			if ($cache == true) {
+                /*
 				$cachePlugin = new CachePlugin(array(
 					'storage' => new DefaultCacheStorage(
-								new DoctrineCacheAdapter(
-									new FilesystemCache(storage_path().'/cache')
-								)
-							)
+						new DoctrineCacheAdapter(
+							new FilesystemCache(storage_path().'/cache')
+						)
+					)
 				));
 
 				// Add the cache plugin to the client object
 				$client->addSubscriber($cachePlugin);
+                */
 			}
 
 			// Check if format is set, otherwise set to json as default
@@ -137,7 +140,7 @@ class Client {
 
 					return $this->getLastParsedResponse();
 				}
-			} catch (Guzzle\Http\Exception\BadResponseException $e) {
+			} catch (RequestException $e) {
 				echo 'Uh oh! ' . $e->getMessage();
 				echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
 				echo 'HTTP request: ' . $e->getRequest() . "\n";
@@ -148,8 +151,7 @@ class Client {
 			}
 		} else if ($transferType == self::POST) {
 
-			$client = new Guzzle($this->_url);
-
+			$client = new Client(['base_url'] => $this->_url]);
 			$request = $client->post(array('{+path}{?key,data*}', array(
 				'path'            => $endpoint,
 				'key'             => $this->_apiKey,
@@ -166,7 +168,7 @@ class Client {
 
 					return $this->getLastParsedResponse();
 				}
-			} catch (Guzzle\Http\Exception\BadResponseException $e) {
+			} catch (RequestException $e) {
 				echo 'Uh oh! ' . $e->getMessage();
 				echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
 				echo 'HTTP request: ' . $e->getRequest() . "\n";
