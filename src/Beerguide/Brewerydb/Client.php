@@ -97,7 +97,7 @@ class Client {
 		$this->_lastParsedResponse = null;
 
 		if ($transferType == self::GET) {
-			$client = new Client(['base_url'] => $this->_url]);
+			$client = new Client(['base_url' => $this->_url]);
 			if ($cache == true) {
                 /*
 				$cachePlugin = new CachePlugin(array(
@@ -151,7 +151,7 @@ class Client {
 			}
 		} else if ($transferType == self::POST) {
 
-			$client = new Client(['base_url'] => $this->_url]);
+			$client = new Client(['base_url' => $this->_url]);
 			$request = $client->post(array('{+path}{?key,data*}', array(
 				'path'            => $endpoint,
 				'key'             => $this->_apiKey,
