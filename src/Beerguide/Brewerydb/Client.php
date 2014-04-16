@@ -73,7 +73,7 @@ class Client {
 	 */
 	public function heartbeat()
 	{
-        $client = new Client(['base_url'] => $this->_url]);
+        $client = new Client(['base_url' => $this->_url]);
         $available = $client->get('/heartbeat');
 
 		return $available->getStatusCode();
