@@ -15,7 +15,8 @@ Composer package for implementing the BreweryDB API in Laravel, using Guzzle for
 
 Place the following in your controller.
 
-``$query = new Brewerydb('your-api-key');
+```
+$query = new Brewerydb('your-api-key');
 // If API is online
 if ($query) {
 	$params = array(
@@ -33,4 +34,5 @@ if ($query) {
 	$beers = Paginator::make($data, $total_results, $per_page);
 } else {
 	// API is offline
-}``
+}
+```
