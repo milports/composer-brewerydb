@@ -10,7 +10,7 @@ class Client {
 	 *
 	 * @var string
 	 */
-	const BASE_URL = 'http://api.brewerydb.com/v2';
+	const BASE_URL = 'http://api.brewerydb.com';
 
 	const GET = 'GET';
 	const POST = 'POST';
@@ -73,8 +73,10 @@ class Client {
 	 */
 	public function heartbeat()
 	{
-        $client = new Client(['base_url' => $this->_url]);
-        $available = $client->get('/heartbeat');
+        $client = new Client([
+		'base_url' => ['http://api.brewerydb.com/{version}/', ['version' => 'v2']]
+	]);
+        $available = $client->get('heartbeat');
 
 		return $available->getStatusCode();
 	}
@@ -97,7 +99,10 @@ class Client {
 		$this->_lastParsedResponse = null;
 
 		if ($transferType == self::GET) {
-			$client = new Client(['base_url' => $this->_url]);
+			$client = new Client([
+				'base_url' => ['http://api.brewerydb.com/{version}/', ['version' => 'v2']]
+			]);
+
 			if ($cache == true) {
                 /*
 				$cachePlugin = new CachePlugin(array(
@@ -118,15 +123,14 @@ class Client {
 				$args['format'] = 'json';
 			}
 
-			$request = $client->get(array('{+path}{/segments}{?key,data*}', array(
-				'path'            => $endpoint,
-				'key'             => $this->_apiKey,
-				'data'            => $args
-			)));
-
 			// Attempt connection and throw error if bad HTTP response is received
 			try {
-				$this->_lastRawResponse = $request->send();
+				$this->_lastRawResponse = $client->get(array('{+path}{/segments}{?key,data*}', array(
+								'path'            => $endpoint,
+								'key'             => $this->_apiKey,
+								'data'            => $args
+				)));
+
 				$this->_statusCode = $this->_lastRawResponse->getStatusCode();
 
 				if ($this->_statusCode == 200) {
@@ -150,33 +154,33 @@ class Client {
 				return false;
 			}
 		} else if ($transferType == self::POST) {
-
-			$client = new Client(['base_url' => $this->_url]);
-			$request = $client->post(array('{+path}{?key,data*}', array(
+		$client = new Client([
+			'base_url' => ['http://api.brewerydb.com/{version}/', ['version' => 'v2']]
+		]);
+		// Attempt connection and throw error if bad HTTP response is received
+		try {
+			$this->_lastRawResponse = $client->post(array('{+path}{/segments}{?key,data*}', array(
 				'path'            => $endpoint,
 				'key'             => $this->_apiKey,
 				'data'            => $args
 			)));
 
-			// Attempt connection and throw error if bad HTTP response is received
-			try {
-				$this->_lastRawResponse = $request->send();
-				$this->_statusCode = $this->_lastRawResponse->getStatusCode();
+			$this->_statusCode = $this->_lastRawResponse->getStatusCode();
 
-				if ($this->_statusCode == 201) {
-					$this->_lastParsedResponse = $this->_lastRawResponse->json();
+			if ($this->_statusCode == 201 || $this->_statusCode == 202) {
+				$this->_lastParsedResponse = $this->_lastRawResponse->json();
 
-					return $this->getLastParsedResponse();
-				}
-			} catch (RequestException $e) {
-				echo 'Uh oh! ' . $e->getMessage();
-				echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
-				echo 'HTTP request: ' . $e->getRequest() . "\n";
-				echo 'HTTP response status: ' . $e->getResponse()->getStatusCode() . "\n";
-				echo 'HTTP response: ' . $e->getResponse() . "\n";
-
-				return false;
+				return $this->getLastParsedResponse();
 			}
+		} catch (RequestException $e) {
+			echo 'Uh oh! ' . $e->getMessage();
+			echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
+			echo 'HTTP request: ' . $e->getRequest() . "\n";
+			echo 'HTTP response status: ' . $e->getResponse()->getStatusCode() . "\n";
+			echo 'HTTP response: ' . $e->getResponse() . "\n";
+
+			return false;
+		}
 		} else if ($transferType == self::PUT) {
 			return false;
 			/*
