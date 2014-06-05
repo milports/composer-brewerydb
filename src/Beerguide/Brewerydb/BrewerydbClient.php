@@ -3,7 +3,7 @@
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
-class Client {
+class BrewerydbClient {
 
 	/**
 	 * Base URL for the Brewerydb API
