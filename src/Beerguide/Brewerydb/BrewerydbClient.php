@@ -154,35 +154,61 @@ class BrewerydbClient {
 				return false;
 			}
 		} else if ($transferType == self::POST) {
-		$client = new Client([
-			'base_url' => ['http://api.brewerydb.com/{version}/', ['version' => 'v2']]
-		]);
-		// Attempt connection and throw error if bad HTTP response is received
-		try {
-			$this->_lastRawResponse = $client->post(array('{+path}{/segments}{?key,data*}', array(
-				'path'            => $endpoint,
-				'key'             => $this->_apiKey,
-				'data'            => $args
-			)));
+    		$client = new Client([
+    			'base_url' => ['http://api.brewerydb.com/{version}/', ['version' => 'v2']]
+    		]);
+    		// Attempt connection and throw error if bad HTTP response is received
+    		try {
+    			$this->_lastRawResponse = $client->post(array('{+path}{/segments}{?key,data*}', array(
+    				'path'            => $endpoint,
+    				'key'             => $this->_apiKey,
+    				'data'            => $args
+    			)));
 
-			$this->_statusCode = $this->_lastRawResponse->getStatusCode();
+    			$this->_statusCode = $this->_lastRawResponse->getStatusCode();
 
-			if ($this->_statusCode == 201 || $this->_statusCode == 202) {
-				$this->_lastParsedResponse = $this->_lastRawResponse->json();
+    			if ($this->_statusCode == 201 || $this->_statusCode == 202) {
+    				$this->_lastParsedResponse = $this->_lastRawResponse->json();
 
-				return $this->getLastParsedResponse();
-			}
-		} catch (RequestException $e) {
-			echo 'Uh oh! ' . $e->getMessage();
-			echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
-			echo 'HTTP request: ' . $e->getRequest() . "\n";
-			echo 'HTTP response status: ' . $e->getResponse()->getStatusCode() . "\n";
-			echo 'HTTP response: ' . $e->getResponse() . "\n";
+    				return $this->getLastParsedResponse();
+    			}
+    		} catch (RequestException $e) {
+    			echo 'Uh oh! ' . $e->getMessage();
+    			echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
+    			echo 'HTTP request: ' . $e->getRequest() . "\n";
+    			echo 'HTTP response status: ' . $e->getResponse()->getStatusCode() . "\n";
+    			echo 'HTTP response: ' . $e->getResponse() . "\n";
 
-			return false;
-		}
+    			return false;
+    		}
 		} else if ($transferType == self::PUT) {
-			return false;
+    		$client = new Client([
+    			'base_url' => ['http://api.brewerydb.com/{version}/', ['version' => 'v2']]
+    		]);
+    		// Attempt connection and throw error if bad HTTP response is received
+    		try {
+    			$this->_lastRawResponse = $client->put(array('{+path}{/segments}{?key,data*}', array(
+    				'path'            => $endpoint,
+    				'key'             => $this->_apiKey,
+    				'data'            => $args
+    			)));
+
+    			$this->_statusCode = $this->_lastRawResponse->getStatusCode();
+
+    			if ($this->_statusCode == 201 || $this->_statusCode == 202) {
+    				$this->_lastParsedResponse = $this->_lastRawResponse->json();
+
+    				return $this->getLastParsedResponse();
+    			}
+    		} catch (RequestException $e) {
+    			echo 'Uh oh! ' . $e->getMessage();
+    			echo 'HTTP request URL: ' . $e->getRequest()->getUrl() . "\n";
+    			echo 'HTTP request: ' . $e->getRequest() . "\n";
+    			echo 'HTTP response status: ' . $e->getResponse()->getStatusCode() . "\n";
+    			echo 'HTTP response: ' . $e->getResponse() . "\n";
+
+    			return false;
+    		}
 			/*
 			$this->_lastRequestUri = $this->_url . '/' . $endpoint . '/';
 
