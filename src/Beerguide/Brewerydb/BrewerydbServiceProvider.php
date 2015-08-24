@@ -1,60 +1,45 @@
-<?php namespace Beerguide\Brewerydb;
+<?php
+
+namespace Beerguide\Brewerydb;
 
 use Illuminate\Support\ServiceProvider;
 
 class BrewerydbServiceProvider extends ServiceProvider {
 
 	/**
+	 * Name of the Laravel package.
+	 *
+	 * @var string
+	 */
+	private static $_packageName = 'brewerydb';
+
+	/**
+	 * Returns the name of the package.
+	 *
+	 * @return string
+	 */
+	public static function getPackageName() {
+		return self::$_packageName;
+	}
+
+	/**
 	 * Indicates if loading of the provider is deferred.
 	 *
 	 * @var bool
 	 */
-	protected $defer = false;
+	protected $defer = true;
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		$this->package('beerguide/brewerydb');
-
-		// Bring the application container instance into the local scope so we can
-		// import it into the filters scope.
-		$app = $this->app;
-
-		$this->app->finish(function() use ($app)
-		{
-			if ($app['config']->get('apikey' == ''))
-			{
-				// Error, no apikey configured
-			}
-		});
+	public function boot() {
 
 	}
-
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		$this->app['brewerydb'] = $this->app->share(function($app)
-		{
-			return new Brewerydb;
+	public function register() {
+		$this->app[self::$_packageName] = $this->app->share(function($app) {
+			return new Menu($app['view'], $app['config']);
 		});
 	}
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array('brewerydb');
+	public function provides() {
+		return [self::$_packageName];
 	}
 
 }
